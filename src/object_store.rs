@@ -5,7 +5,7 @@ use crate::{
     camera::{Camera, CameraDescriptor},
     color::Color,
     light::Light,
-    object::{sphere::Sphere, Intersectable, Object},
+    object::{sphere::Sphere, Object},
     surface::SurfaceMaterial,
 };
 
@@ -28,15 +28,10 @@ impl ObjectStore {
 
     pub fn read_scene(&mut self, width: u32, height: u32) {
         println!("width: {}, height: {}", width, height);
-        let aspect = width as f32 / height as f32;
-        let vfov: f32 = 50.;
-        let hfov = (2. * (aspect * (vfov / 2.).to_radians().tan()).atan()).to_degrees();
-        println!("hfov: {}, vfov: {}", hfov, vfov);
         let camera = Camera::new(&CameraDescriptor {
             width,
             height,
-            hfov,
-            vfov,
+            vfov: 50.,
             eye_pointer: vec3(0., 0., 10.),
             look_pointer: vec3(0., 0., 0.),
             up_pointer: vec3(0., 1., 0.),
@@ -97,10 +92,6 @@ impl ObjectStore {
             )
             .into(),
         );
-    }
-
-    pub fn lights(&self) -> &[Light] {
-        &self.lights
     }
 
     pub fn lights_mut(&mut self) -> impl Iterator<Item = &mut Light> {

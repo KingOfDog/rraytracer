@@ -20,4 +20,10 @@ impl Raytracer {
             .flat_map(|pixel| pixel.to_rgb_bytes())
             .collect()
     }
+
+    pub fn resize(&self, width: u32, height: u32) {
+        unsafe {
+            OBJECT_STORE.camera.resize(width, height);
+        }
+    }
 }

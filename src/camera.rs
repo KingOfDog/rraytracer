@@ -1,9 +1,8 @@
-use glam::{vec3, Vec3};
+use glam::Vec3;
 
 use crate::{
     color::Color,
     consts::FAR_AWAY,
-    light,
     object::{Intersectable, Object},
     object_store::OBJECT_STORE,
 };
@@ -29,31 +28,39 @@ pub struct Camera {
     scrnx: Vec3,
     scrny: Vec3,
 
-    level: u32,
     pub max_level: u32,
 
     pub background: Color,
 
-    depth_buffer: Vec<f32>,
     frame_buffer: Vec<Color>,
 }
 
 impl Camera {
     pub fn new(desc: &CameraDescriptor) -> Self {
+        let aspect = desc.width as f32 / desc.height as f32;
+        let hfov = (2. * (aspect * (desc.vfov / 2.).to_radians().tan()).atan()).to_degrees();
         Camera {
             eye_pointer: desc.eye_pointer,
             look_pointer: desc.look_pointer,
             up_pointer: desc.up_pointer,
             near: desc.near,
             far: desc.far,
-            hfov: desc.hfov,
             vfov: desc.vfov,
+            hfov,
             width: desc.width,
             height: desc.height,
             max_level: desc.max_level,
             background: desc.background,
             ..Default::default()
         }
+    }
+
+    pub fn resize(&mut self, width: u32, height: u32) {
+        self.width = width;
+        self.height = height;
+        let aspect = self.width as f32 / self.height as f32;
+        let hfov = (2. * (aspect * (self.vfov / 2.).to_radians().tan()).atan()).to_degrees();
+        self.hfov = hfov;
     }
 
     pub fn calculate_first_ray(&mut self) -> Vec3 {
@@ -70,24 +77,17 @@ impl Camera {
         let magnitude = dist * self.vfov.to_radians().tan() / self.height as f32;
         self.scrny = self.scrny * magnitude;
 
-        let offset = Vec3::ONE * self.height as f32 / 2. * self.scrny
-            - Vec3::ONE * self.width as f32 / 2. * self.scrnx;
+        let offset = -self.scrnx * self.width as f32 / 2. + self.scrny * self.height as f32 / 2.;
         self.first_ray = self.look_pointer - self.eye_pointer + offset;
 
-        return self.first_ray;
-    }
-
-    pub fn first_ray(&self) -> Vec3 {
         self.first_ray
-    }
-
-    pub fn gaze(&self) -> Vec3 {
-        self.gaze
     }
 
     pub fn trace(&mut self) {
         self.frame_buffer = vec![Color::default(); self.width as usize * self.height as usize];
         //self.depth_buffer = vec![f32::MAX; self.width as usize * self.height as usize];
+
+        println!("width = {}, height = {}", self.width, self.height);
 
         for y in 0..self.height {
             for x in 0..self.width {
@@ -209,7 +209,6 @@ pub struct CameraDescriptor {
     pub near: f32,
     pub far: f32,
 
-    pub hfov: f32,
     pub vfov: f32,
 
     pub width: u32,

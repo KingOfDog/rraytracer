@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Deref, Mul, MulAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign};
 
 use glam::Vec3;
 

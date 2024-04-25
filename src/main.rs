@@ -13,6 +13,7 @@ use eyre::Result;
 
 use raytracer::Raytracer;
 use winit::{
+    dpi::LogicalSize,
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
@@ -20,7 +21,11 @@ use winit::{
 
 fn main() -> Result<()> {
     let event_loop = EventLoop::new()?;
-    let window = Rc::new(WindowBuilder::new().build(&event_loop)?);
+    let window = Rc::new(
+        WindowBuilder::new()
+            .with_inner_size(LogicalSize::new(800, 800))
+            .build(&event_loop)?,
+    );
 
     let context = softbuffer::Context::new(window.clone()).unwrap();
     let mut surface = softbuffer::Surface::new(&context, window.clone()).unwrap();
@@ -43,6 +48,7 @@ fn main() -> Result<()> {
                 surface
                     .resize(width.try_into().unwrap(), height.try_into().unwrap())
                     .unwrap();
+                raytracer.resize(width, height);
 
                 let mut buffer = surface.buffer_mut().unwrap();
 
