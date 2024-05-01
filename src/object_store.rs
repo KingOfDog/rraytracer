@@ -5,7 +5,7 @@ use crate::{
     camera::{Camera, CameraDescriptor},
     color::Color,
     light::Light,
-    object::{sphere::Sphere, Object},
+    object::{sphere::Sphere, triangle::Triangle, Object},
     surface::SurfaceMaterial,
 };
 
@@ -87,6 +87,23 @@ impl ObjectStore {
                     specular: Color::new(30., 30., 40.),
                     specular_power: 2.,
                     reflection: 0.3,
+                    transparency: 0.,
+                },
+            )
+            .into(),
+        );
+
+        self.objects.push(
+            Triangle::from_vertices(
+                vec3(2., 1., 6.),
+                vec3(-2., 1., 6.),
+                vec3(0., 0., 6.),
+                SurfaceMaterial {
+                    ambient: Color::new(0., 50., 0.),
+                    diffuse: Color::new(0., 200., 0.),
+                    specular: Color::new(30., 60., 0.),
+                    specular_power: 6.,
+                    reflection: 0.2,
                     transparency: 0.,
                 },
             )

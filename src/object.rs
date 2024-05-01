@@ -1,4 +1,5 @@
 pub mod sphere;
+pub mod triangle;
 
 use enum_dispatch::enum_dispatch;
 use glam::Vec3;
@@ -9,6 +10,7 @@ use crate::surface::SurfaceMaterial;
 #[enum_dispatch]
 pub enum Object {
     Sphere(sphere::Sphere),
+    Triangle(triangle::Triangle),
 }
 
 #[enum_dispatch(Object)]
