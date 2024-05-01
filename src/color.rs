@@ -21,9 +21,9 @@ impl Color {
     }
 
     pub fn to_rgb_bytes(&self) -> [u8; 3] {
-        let r = self.r().clamp(0., 255.) as u8;
-        let g = self.g().clamp(0., 255.) as u8;
-        let b = self.b().clamp(0., 255.) as u8;
+        let r = (self.r().clamp(0., 1.) * 255.) as u8;
+        let g = (self.g().clamp(0., 1.) * 255.) as u8;
+        let b = (self.b().clamp(0., 1.) * 255.) as u8;
         [r, g, b]
     }
 }
@@ -53,5 +53,11 @@ impl Mul<f32> for Color {
 impl MulAssign<f32> for Color {
     fn mul_assign(&mut self, rhs: f32) {
         self.0 *= rhs;
+    }
+}
+
+impl From<[f32; 3]> for Color {
+    fn from(value: [f32; 3]) -> Self {
+        Color(Vec3::new(value[0], value[1], value[2]))
     }
 }

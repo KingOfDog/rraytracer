@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use glam::Vec3;
 
 use crate::{
@@ -84,6 +86,7 @@ impl Camera {
     }
 
     pub fn trace(&mut self) {
+        let start = Instant::now();
         self.frame_buffer = vec![Color::default(); self.width as usize * self.height as usize];
         //self.depth_buffer = vec![f32::MAX; self.width as usize * self.height as usize];
 
@@ -99,6 +102,7 @@ impl Camera {
                 self.frame_buffer[(y * self.width + x) as usize] = color;
             }
         }
+        println!("Rendering took {:?}", start.elapsed());
     }
 
     fn intersect_and_shade(
